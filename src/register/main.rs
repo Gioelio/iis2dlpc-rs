@@ -1,4 +1,8 @@
-use crate::{BusOperation, DelayNs, Error, Iis2dlpc};
+use super::super::{
+    BusOperation, DelayNs, Error, Iis2dlpc, RegisterOperation, SensorOperation, bisync,
+    register::OnState,
+};
+
 use bitfield_struct::bitfield;
 use derive_more::TryFrom;
 use st_mem_bank_macro::register;
@@ -125,7 +129,7 @@ pub enum Reg {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::OutTL, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::OutTL, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u16, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u16, order = Lsb))]
 pub struct OutT {
@@ -143,7 +147,7 @@ pub struct OutT {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl1, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl1, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl1 {
@@ -179,7 +183,7 @@ pub struct Ctrl1 {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl2, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl2, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl2 {
@@ -264,7 +268,7 @@ pub struct Ctrl2 {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl3, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl3, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl3 {
@@ -328,7 +332,7 @@ pub struct Ctrl3 {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl4Int1PadCtrl, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl4Int1PadCtrl, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl4Int1PadCtrl {
@@ -388,7 +392,7 @@ pub struct Ctrl4Int1PadCtrl {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl5Int2PadCtrl, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl5Int2PadCtrl, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl5Int2PadCtrl {
@@ -448,7 +452,7 @@ pub struct Ctrl5Int2PadCtrl {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl6, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl6, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl6 {
@@ -507,7 +511,7 @@ pub struct Ctrl6 {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Status, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Status, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Status {
@@ -600,7 +604,7 @@ pub struct Status {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::OutXL, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::OutXL, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u16, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u16, order = Lsb))]
 pub struct OutX {
@@ -619,7 +623,7 @@ pub struct OutX {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::OutYL, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::OutYL, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u16, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u16, order = Lsb))]
 pub struct OutY {
@@ -638,7 +642,7 @@ pub struct OutY {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::OutZL, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::OutZL, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u16, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u16, order = Lsb))]
 pub struct OutZ {
@@ -656,7 +660,7 @@ pub struct OutZ {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::FifoCtrl, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::FifoCtrl, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct FifoCtrl {
@@ -689,7 +693,7 @@ pub struct FifoCtrl {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::FifoSamples, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::FifoSamples, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct FifoSamples {
@@ -729,7 +733,7 @@ pub struct FifoSamples {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::TapThsX, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::TapThsX, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct TapThsX {
@@ -765,7 +769,7 @@ pub struct TapThsX {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::TapThsY, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::TapThsY, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct TapThsY {
@@ -791,7 +795,7 @@ pub struct TapThsY {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::TapThsZ, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::TapThsZ, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct TapThsZ {
@@ -827,7 +831,7 @@ pub struct TapThsZ {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::IntDur, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::IntDur, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct IntDur {
@@ -857,7 +861,7 @@ pub struct IntDur {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::WakeUpThs, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::WakeUpThs, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct WakeUpThs {
@@ -887,7 +891,7 @@ pub struct WakeUpThs {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::WakeUpDur, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::WakeUpDur, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct WakeUpDur {
@@ -923,7 +927,7 @@ pub struct WakeUpDur {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::FreeFall, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::FreeFall, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct FreeFall {
@@ -947,7 +951,7 @@ pub struct FreeFall {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::StatusDup, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::StatusDup, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct StatusDup {
@@ -1039,7 +1043,7 @@ pub struct StatusDup {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::WakeUpSrc, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::WakeUpSrc, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct WakeUpSrc {
@@ -1102,7 +1106,7 @@ pub struct WakeUpSrc {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::TapSrc, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::TapSrc, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct TapSrc {
@@ -1171,7 +1175,7 @@ pub struct TapSrc {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::SixdSrc, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::SixdSrc, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct SixdSrc {
@@ -1232,7 +1236,7 @@ pub struct SixdSrc {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::AllIntSrc, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::AllIntSrc, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct AllIntSrc {
@@ -1308,7 +1312,7 @@ pub struct AllIntSrc {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::XOfsUsr, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::XOfsUsr, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct XOfsUsr {
@@ -1325,7 +1329,7 @@ pub struct XOfsUsr {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::YOfsUsr, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::YOfsUsr, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct YOfsUsr {
@@ -1342,7 +1346,7 @@ pub struct YOfsUsr {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::ZOfsUsr, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::ZOfsUsr, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct ZOfsUsr {
@@ -1358,7 +1362,7 @@ pub struct ZOfsUsr {
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
 /// * `Lsb`: Least significant bit first (default).
-#[register(address = Reg::Ctrl7, access_type = Iis2dlpc, generics = 2)]
+#[register(address = Reg::Ctrl7, access_type = "Iis2dlpc<B, T, OnState>")]
 #[cfg_attr(feature = "bit_order_msb", bitfield(u8, order = Msb))]
 #[cfg_attr(not(feature = "bit_order_msb"), bitfield(u8, order = Lsb))]
 pub struct Ctrl7 {
