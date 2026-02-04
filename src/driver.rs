@@ -445,6 +445,8 @@ impl<B: BusOperation, T: DelayNs> Iis2dlpc<B, T, OnState> {
     /// This function retrieves the raw acceleration data for the X, Y, and Z axes from the `OUT_X_L`, `OUT_X_H`, `OUT_Y_L`, `OUT_Y_H`, `OUT_Z_L`, and `OUT_Z_H` registers.
     /// The values are expressed as 16-bit words in two's complement format.
     ///
+    /// If Low-Power Mode is set, the bit resolution is 12 bits, with the two least significant bits equal to 0; otherwise, it is 14 bits.
+    ///
     /// ### Returns
     /// - `Ok([i16; 3])`: An array containing the raw acceleration data for the X, Y, and Z axes.
     /// - `Err(Error::Bus)`: If there is an error at the bus level during the read operation.
@@ -917,6 +919,16 @@ impl<B: BusOperation, T: DelayNs> Iis2dlpc<B, T, OnState> {
     }
 
     /// Select the signal that need to route on int1 pad.
+    ///
+    /// # Arguments
+    ///
+    /// * `val`: `Ctrl4Int1PadCtrl` register.
+    ///
+    /// # Returns
+    ///
+    /// * `Result`
+    ///     * `()`
+    ///     * `Err`: Returns an error if the operation fails.
     pub async fn pin_int1_route_set(
         &mut self,
         val: &Ctrl4Int1PadCtrl,
@@ -942,12 +954,28 @@ impl<B: BusOperation, T: DelayNs> Iis2dlpc<B, T, OnState> {
         ctrl7.write(self).await
     }
 
-    /// Select the signal that need to route on int1 pad.
+    /// Get the signals routed on int1 pad.
+    ///
+    /// # Returns
+    ///
+    /// * `Result`
+    ///     * `Ctrl4Int1PadCtrl`
+    ///     * `Err`: Returns an error if the operation fails.
     pub async fn pin_int1_route_get(&mut self) -> Result<Ctrl4Int1PadCtrl, Error<B::Error>> {
         Ctrl4Int1PadCtrl::read(self).await
     }
 
     /// Select the signal that need to route on int2 pad.
+    ///
+    /// # Arguments
+    ///
+    /// * `val`: `Ctrl5Int2PadCtrl` register.
+    ///
+    /// # Returns
+    ///
+    /// * `Result`
+    ///     * `()`
+    ///     * `Err`: Returns an error if the operation fails.
     pub async fn pin_int2_route_set(
         &mut self,
         val: &Ctrl5Int2PadCtrl,
@@ -973,12 +1001,12 @@ impl<B: BusOperation, T: DelayNs> Iis2dlpc<B, T, OnState> {
         ctrl7.write(self).await
     }
 
-    /// Select the signal that need to route on int2 pad.
+    /// Get the signals routed on int2 pad.
     ///
     /// # Returns
     ///
     /// * `Result`
-    ///     * `Ctrl5Int2PadCtrl`: register CTRL5_INT2_PAD_CTRL.
+    ///     * `Ctrl5Int2PadCtrl`
     ///     * `Err`: Returns an error if the operation fails.
     pub async fn pin_int2_route_get(&mut self) -> Result<Ctrl5Int2PadCtrl, Error<B::Error>> {
         Ctrl5Int2PadCtrl::read(self).await

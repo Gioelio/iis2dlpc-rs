@@ -237,6 +237,9 @@ pub struct Ctrl2 {
     #[bits(1, default = 0)]
     pub cs_pu_disc: u8,
 
+    /// Reserved bit.
+    ///
+    /// Default value: `0`.
     #[bits(1, access = RO, default = 0)]
     not_used_01: u8,
 
@@ -600,6 +603,7 @@ pub struct Status {
 ///
 /// The `OutX` register contains the raw acceleration data for the X-axis as a 14-bit two's complement value.
 /// The data is left-justified within the 16-bit register, with 2 unused bits.
+/// If Low-Power Mode is set, the bit resolution is 12 bits, with the two least significant bits equal to 0.
 ///
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
@@ -619,6 +623,7 @@ pub struct OutX {
 ///
 /// The `OutY` register contains the raw acceleration data for the Y-axis as a 14-bit two's complement value.
 /// The data is left-justified within the 16-bit register, with 2 unused bits.
+/// If Low-Power Mode is set, the bit resolution is 12 bits, with the two least significant bits equal to 0.
 ///
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
@@ -638,6 +643,7 @@ pub struct OutY {
 ///
 /// The `OutZ` register contains the raw acceleration data for the Z-axis as a 14-bit two's complement value.
 /// The data is left-justified within the 16-bit register, with 2 unused bits.
+/// If Low-Power Mode is set, the bit resolution is 12 bits, with the two least significant bits equal to 0.
 ///
 /// The bit order for this struct can be configured using the `bit_order_msb` feature:
 /// * `Msb`: Most significant bit first.
