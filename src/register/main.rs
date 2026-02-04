@@ -1502,7 +1502,7 @@ pub enum Mode {
 
     /// Continuous low-power mode with 12-bit resolution (default).
     #[default]
-    ContLowPwr12bit = 0x00,
+    ContLowPwr1 = 0x00,
     /// Single low-power mode 4.
     SingleLowPwr4 = 0x0B,
     /// Single low-power mode 3.
@@ -1510,7 +1510,7 @@ pub enum Mode {
     /// Single low-power mode 2.
     SingleLowPwr2 = 0x09,
     /// Single low-power mode with 12-bit resolution.
-    SingleLowPwr12bit = 0x08,
+    SingleLowPwr1 = 0x08,
     /// High-performance mode with low noise.
     HighPerformanceLowNoise = 0x14,
     /// Continuous low-power mode 4 with low noise.
@@ -1520,7 +1520,7 @@ pub enum Mode {
     /// Continuous low-power mode 2 with low noise.
     ContLowPwrLowNoise2 = 0x11,
     /// Continuous low-power mode with 12-bit resolution and low noise.
-    ContLowPwrLowNoise12bit = 0x10,
+    ContLowPwrLowNoise1 = 0x10,
     /// Single low-power mode 4 with low noise.
     SingleLowPwrLowNoise4 = 0x1B,
     /// Single low-power mode 3 with low noise.
@@ -1528,7 +1528,7 @@ pub enum Mode {
     /// Single low-power mode 2 with low noise.
     SingleLowPwrLowNoise2 = 0x19,
     /// Single low-power mode with 12-bit resolution and low noise.
-    SingleLowLowNoisePwr12bit = 0x18,
+    SingleLowLowNoisePwr1 = 0x18,
 }
 
 impl Mode {
